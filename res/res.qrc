@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>mainbg.png</file>
+        <file>view.png</file>
+        <file>search.png</file>
+        <file>refresh.png</file>
+        <file>menu.png</file>
+        <file>add.png</file>
+        <file>home.png</file>
+        <file>display.png</file>
+        <file>subfolder.png</file>
+        <file>folder.png</file>
+        <file>delete.png</file>
+        <file>about.png</file>
+        <file>setting.png</file>
+        <file>style.qss</file>
+        <file>keyshortcut.png</file>
+        <file>ddocument.svg</file>
+    </qresource>
+    <qresource prefix="/qss">
+        <file>style.qss</file>
+    </qresource>
+</RCC>
