@@ -17,6 +17,8 @@ public:
     DDocSetting& operator=(const DDocSetting& setting);
     bool operator==(const DDocSetting& setting);
 
+    bool isSameDocPathList(const DDocSetting& setting);
+
     const QStringList& docPathList() const { return docPathList_; }
 
     void setSortFlag(QDir::SortFlag flag) { sortFlag_ = flag; }

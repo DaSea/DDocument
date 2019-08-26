@@ -1,12 +1,13 @@
 [Desktop Entry]
-Type=Application
-Categories=Utility;Document;
+Name=DaSea's Document Manager
+Name[zh_CN] = 海之电子书管理软件
 Comment=Simple and easy to use document
+Comment[zh_CN] = 简单的本地电子书管理
+Categories=Utility;Document;
 Exec=/opt/DDocument/DDocument
 GenericName=Document
-Icon=/opt/DDocument/ddocument.svg
-Name=DDocument
+Icon=document
+Type=Application
+# Icon=/opt/DDocument/ddocument.svg
 StartupNotify=false
-Comment[zh_CN] = 简单的本地电子书浏览
-Name[zh_CN] = 海之电子书浏览
-GenericName[zh_CN] = 本地电子书浏览
+Terminal=false

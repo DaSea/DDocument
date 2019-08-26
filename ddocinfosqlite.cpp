@@ -10,36 +10,54 @@
 
 DDocInfoSqlite::DDocInfoSqlite(QString name)
 {
-    // QStringList drivers = QSqlDatabase::drivers();
-    // foreach (QString driver, drivers)
-        // qDebug()<<driver;
-
     dbname_ = name;
-
-    sqlData_=QSqlDatabase::addDatabase("QSQLITE");
-    if (!sqlData_.isValid()) {
-        qFatal("No sqlite available");
+    bool isExist = QFile::exists(dbname_);
+    if (!isExist) {
+        sqlData_ = QSqlDatabase::addDatabase("QSQLITE", "ddocument");
+    } else  {
+        sqlData_ = QSqlDatabase::addDatabase("QSQLITE");
     }
 
-    if (!sqlData_.driver()->hasFeature(QSqlDriver::Transactions)) {
-        qFatal("QSqlDriverr::Transactions not available.");
+    qDebug()<<"data base:"<<dbname_;
+    sqlData_.setDatabaseName(dbname_);
+    if (!sqlData_.open()) {
+        qDebug() << "open database failed ---" << sqlData_.lastError().text();
     }
 
-    sqlData_.setDatabaseName(name);
-    sqlData_.setUserName("ddocument");
-    sqlData_.setPassword("123456");
-    if(!sqlData_.open()){
-        qFatal("Unable to establish a database connection.");
+    if (sqlData_.isOpen()) {
+        checkAndCreateTable();
     }
-    sqlData_.transaction();
+}
 
-    QSqlQuery q(sqlData_);
-    if (!q.exec("CREATE TABLE IF NOT EXISTS searchIndex ( "
-                "  id INTEGER PRIMARY KEY NOT NULL, "
-                "  name varchar(100),"
-                "  path varchar(200) "
-                "); ")) {
-        qFatal("Unable to create table 'query_handler': %s", q.lastError().text().toUtf8().constData());
+void DDocInfoSqlite::checkAndCreateTable() {
+    QStringList tableNameList  = sqlData_.tables();
+    qDebug() << "Number of tables = " << tableNameList.count();
+
+    QString tablename("searchIndex");
+    bool isFind  = false;
+    foreach (QString name, tableNameList) {
+        isFind = false;
+        // sqlite_sequence 排除
+        if (QString("sqlite_sequence") == name) {
+            continue;
+        }
+
+        if (tablename == name) {
+            isFind = true;
+            break;
+        }
+    }
+
+    if (!isFind) {
+        QSqlQuery q(sqlData_);
+        if (!q.exec("CREATE TABLE IF NOT EXISTS searchIndex ( "
+                    "  id INTEGER PRIMARY KEY NOT NULL, "
+                    "  name varchar(100),"
+                    "  path varchar(200) "
+                    "); ")) {
+            qFatal("Unable to create table 'query_handler': %s",
+                   q.lastError().text().toUtf8().constData());
+        }
     }
 }
 
@@ -56,7 +74,7 @@ bool DDocInfoSqlite::open() {
 }
 
 void DDocInfoSqlite::clear() {
-    QSqlQuery query;
+    QSqlQuery query(sqlData_);
     query.prepare("delete from searchIndex");
     if (!query.exec()) {
         qDebug()<<"DDocInfoSqlite::clear data failed!";
@@ -103,7 +121,7 @@ void DDocInfoSqlite::fillFileFromDir(const QString& path, QStringList& filters) 
     }
 
     // id, name, fullpath
-    QSqlQuery query;
+    QSqlQuery query(sqlData_);
     query.prepare("INSERT INTO searchIndex (id, name, path) VALUES (:id, :name, :path)");
     foreach (QFileInfo fileinfo, filelist) {
         // find and insert it to db

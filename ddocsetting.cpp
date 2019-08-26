@@ -102,6 +102,14 @@ DDocSetting& DDocSetting::operator=(const DDocSetting& other) {
     return *this;
 }
 
+bool DDocSetting::isSameDocPathList(const DDocSetting& setting) {
+    if (setting.docPathList_ == this->docPathList_) {
+        return true;
+    }
+
+    return false;
+}
+
 bool DDocSetting::operator==(const DDocSetting& setting) {
     if (setting.docPathList_ == this->docPathList_) {
         return true;

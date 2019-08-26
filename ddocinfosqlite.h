@@ -26,6 +26,7 @@ public:
 
 private:
     void fillFileFromDir(const QString& path, QStringList& filters);
+    void checkAndCreateTable();
 
 private:
     // manager sqlite database

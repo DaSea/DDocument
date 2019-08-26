@@ -74,7 +74,7 @@ DMainWidget::DMainWidget(QWidget* parent):
     setting_ = DDocSetting(configpath + "/DDocument/config.ini");
     infoDlg_->fillTreeView(setting_);
 
-    QString dbname = configpath + "/DDocument/info.db";
+    QString dbname = configpath + "/DDocument/ddocument.db";
     qDebug()<<configpath<<"-"<<dbname;
     createDocInfoDB(dbname);
 
@@ -139,7 +139,8 @@ void DMainWidget::settingClicked() {
     dialog.setSetting(setting_);
     if (QDialog::Accepted == dialog.exec()) {
         DDocSetting setting = dialog.getSetting();
-        if (setting_ == setting) {
+        // if (setting_ == setting) {
+        if (setting_.isSameDocPathList(setting)) {
             qDebug()<<"Has same setting!";
             return ;
         }

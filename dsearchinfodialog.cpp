@@ -41,10 +41,10 @@ DSearchInfoDialog::~DSearchInfoDialog()
 }
 
 void DSearchInfoDialog::initQuery() {
-    QSqlQuery query("SELECT path FROM searchIndex", db_->database());
+    QSqlQuery query("SELECT name FROM searchIndex", db_->database());
     QSqlRecord rec = query.record();
     QStringList strlist;
-    int pathcol = rec.indexOf("path"); // index of the field "path"
+    int pathcol = rec.indexOf("name"); // index of the field "path"
     while (query.next()){
         strlist<<query.value(pathcol).toString();
     }
@@ -58,11 +58,11 @@ void DSearchInfoDialog::search()
 {
     // execute search
     QString edit = ui->lineEdit_edit->text();
-    QString querystr = QString("SELECT path FROM searchIndex WHERE name like '%%1%'").arg(edit);
+    QString querystr = QString("SELECT name FROM searchIndex WHERE name like '%%1%'").arg(edit);
     QSqlQuery query(querystr, db_->database());
     QSqlRecord rec = query.record();
     QStringList strlist;
-    int pathcol = rec.indexOf("path"); // index of the field "path"
+    int pathcol = rec.indexOf("name"); // index of the field "path"
     while (query.next()){
         strlist<<query.value(pathcol).toString();
     }
