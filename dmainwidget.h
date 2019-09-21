@@ -61,6 +61,8 @@ private slots:
 
     void onReadThreadDestroy(QObject* obj);
 
+    void onKeyPressed(int key);
+
 private:
     void createDocInfoDB(QString& dbname);
 

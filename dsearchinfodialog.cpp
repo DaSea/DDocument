@@ -11,6 +11,8 @@
 #include <QKeyEvent>
 #include <QDesktopServices>
 
+#define HIS_PATH_ROLE (Qt::UserRole+1)
+
 DSearchInfoDialog::DSearchInfoDialog(QWidget* parent, DDocInfoSqlite* db):
     QDialog(parent), ui(new Ui::DSearchInfoDialog), db_(db) {
     ui->setupUi(this);
@@ -41,16 +43,10 @@ DSearchInfoDialog::~DSearchInfoDialog()
 }
 
 void DSearchInfoDialog::initQuery() {
-    QSqlQuery query("SELECT name FROM searchIndex", db_->database());
+    // QSqlQuery query("SELECT name,path FROM searchIndex", db_->database());
+    QSqlQuery query("SELECT path FROM searchIndex", db_->database());
     QSqlRecord rec = query.record();
-    QStringList strlist;
-    int pathcol = rec.indexOf("name"); // index of the field "path"
-    while (query.next()){
-        strlist<<query.value(pathcol).toString();
-    }
-
-    // qDebug()<<"strlist"<<strlist;
-    listModel_->setStringList(strlist);
+    fillModelWithQuery(&query);
     ui->listView_search->setCurrentIndex(listModel_->index(0, 0));
 }
 
@@ -58,17 +54,30 @@ void DSearchInfoDialog::search()
 {
     // execute search
     QString edit = ui->lineEdit_edit->text();
-    QString querystr = QString("SELECT name FROM searchIndex WHERE name like '%%1%'").arg(edit);
+    // QString querystr = QString("SELECT name,path FROM searchIndex WHERE name like '%%1%'").arg(edit);
+    QString querystr = QString("SELECT path FROM searchIndex WHERE name like '%%1%'").arg(edit);
     QSqlQuery query(querystr, db_->database());
-    QSqlRecord rec = query.record();
-    QStringList strlist;
-    int pathcol = rec.indexOf("name"); // index of the field "path"
-    while (query.next()){
-        strlist<<query.value(pathcol).toString();
-    }
-
-    listModel_->setStringList(strlist);
+    fillModelWithQuery(&query);
     ui->listView_search->setCurrentIndex(listModel_->index(0, 0));
+}
+
+void DSearchInfoDialog::fillModelWithQuery(QSqlQuery* query) {
+    listModel_->removeRows(0, listModel_->rowCount());
+
+    // query use path and name
+    QSqlRecord rec = query->record();
+    // int namecol = rec.indexOf("name");
+    int pathcol = rec.indexOf("path");
+    int row = 0;
+    while (query->next()){
+        listModel_->insertRows(row, 1);
+
+        QModelIndex index = listModel_->index(row);
+        listModel_->setData(index, query->value(pathcol)); // Qt::DisplayRole
+        // qDebug()<<"path:"<<query->value(pathcol).toString();
+        // listModel_->setData(index, query->value(pathcol), HIS_PATH_ROLE);
+        ++row;
+    }
 }
 
 bool DSearchInfoDialog::eventFilter(QObject* obj, QEvent *event) {
@@ -122,7 +131,7 @@ bool DSearchInfoDialog::handleKeyPress(QObject *, QEvent* event) {
             // open file
             if (currentIndex.isValid()) {
                 QString docpath = listModel_->data(currentIndex).toString();
-                // qDebug()<<"open file name is:"<<docpath;
+                qDebug()<<"open file name is:"<<docpath;
                 QDesktopServices::openUrl(QUrl::fromLocalFile(docpath));
             }
             return true;

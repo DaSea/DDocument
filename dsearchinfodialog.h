@@ -11,6 +11,7 @@ class DSearchInfoDialog;
 
 // class QSqlQueryModel;
 class QStringListModel;
+class QSqlQuery;
 class DSearchInfoDialog : public QDialog
 {
     Q_OBJECT
@@ -27,6 +28,9 @@ protected:
 private:
     bool handleKeyPress(QObject* obj, QEvent* event);
     void search();
+
+    //! 用query搜索记录填充listModel_
+    void fillModelWithQuery(QSqlQuery* query);
 
 private:
     Ui::DSearchInfoDialog *ui;

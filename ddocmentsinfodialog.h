@@ -15,6 +15,7 @@ class QStandardItemModel;
 class QStandardItem;
 class QTableView;
 class QMenu;
+class QKeyEvent;
 class DDocmentsInfoDialog : public QDialog
 {
     Q_OBJECT
@@ -27,6 +28,10 @@ public:
 
 signals:
     void updateTitle(QString title);
+    void keyPressed(int key);
+
+protected:
+    virtual void keyPressEvent(QKeyEvent* event);
 
 private slots:
     void on_treeView_doc_clicked(const QModelIndex &index);

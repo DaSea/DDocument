@@ -15,6 +15,12 @@ public:
     explicit DDocmentDisplayDialog(QWidget *parent = nullptr);
     ~DDocmentDisplayDialog();
 
+signals:
+    void keyPressed(int key);
+
+protected:
+    virtual void keyPressEvent(QKeyEvent* event);
+
 private:
     Ui::DDocmentDisplayDialog *ui;
 };

@@ -15,6 +15,9 @@
 
 #include <QDebug>
 
+#define KEY_CONNECT(sender) if(nullptr!=sender){connect(sender,SIGNAL(keyPressed(int)),this,SLOT(onKeyPressed(int)));}
+#define KEY_DISCONNECT(sender) if(nullptr!=sender){disconnect(sender,SIGNAL(keyPressed(int)),this,SLOT(onKeyPressed(int)));}
+
 /*****************************************************************************************
  * ReadBookInfoThread function group:读取shape的线程
  *****************************************************************************************/
@@ -74,6 +77,8 @@ DMainWidget::DMainWidget(QWidget* parent):
     setting_ = DDocSetting(configpath + "/DDocument/config.ini");
     infoDlg_->fillTreeView(setting_);
 
+    KEY_CONNECT(infoDlg_);
+
     QString dbname = configpath + "/DDocument/ddocument.db";
     qDebug()<<configpath<<"-"<<dbname;
     createDocInfoDB(dbname);
@@ -131,6 +136,18 @@ void DMainWidget::on_pushBtn_menu_clicked()
     if (nullptr != menu) {
         menu->exec(QCursor::pos());
         delete menu;
+    }
+}
+
+void DMainWidget::onKeyPressed(int key)
+{
+    switch(key) {
+    case Qt::Key_Escape:
+        return ;
+        break;
+
+    default:
+        break;
     }
 }
 
